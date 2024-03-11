@@ -8,7 +8,8 @@ const  {
     PlacedBidModel,
     ResultedAuctionModel,
     NFTCollectionModel,
-    TokenModel
+    TokenModel,
+    UserModel,
     } = require('contracts/build/lib/models')
 
    module.exports =  {
@@ -21,5 +22,6 @@ const  {
         PlacedBidModel,
         ResultedAuctionModel,
         NFTCollectionModel,
-        TokenModel
+        TokenModel,
+        UserModel
         } 
