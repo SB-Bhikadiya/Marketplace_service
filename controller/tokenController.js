@@ -2,12 +2,11 @@ const { TokenModel } = require("../model");
 
 exports.getToken = async (req, res) => {
   try {
-    if (req.query.nft != null && req.query.tokenId != null) {
-      const toekn = await TokenModel.findOne({
-        address: { $regex: new RegExp("^" + req.body.nft + "$", "i") },
-        tokenId: req.query.tokenId,
-      });
-      return res.send(toekn);
+    if (req.query.owner != null) {
+      const token = await TokenModel.find({
+        owner: { $regex: new RegExp("^" + req.query.owner + "$", "i") },
+      }).populate({ path: "metadata" });
+      return res.send(token);
     }
     const toekn = await TokenModel.find();
     return res.send(toekn);
@@ -18,8 +17,8 @@ exports.getToken = async (req, res) => {
 
 exports.postToken = async (req, res) => {
   try {
-    const toekn = await TokenModel.create(req.body);
-    res.send(toekn);
+    const token = await TokenModel.create(req.body);
+    res.send(token);
   } catch (error) {
     console.log(error);
   }
