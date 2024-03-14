@@ -18,6 +18,7 @@ var nftCollectionRouter = require("./routes/nftCollection");
 var tokenModelRouter = require("./routes/token");
 var usersRouter = require("./routes/users");
 var metadataRouter = require("./routes/metadata");
+var nftRouter = require("./routes/nft")
 
 var app = express();
 
@@ -46,6 +47,7 @@ app.use("/resulted-auction", resultedAuctionNFTsRouter);
 app.use("/collection", nftCollectionRouter);
 app.use("/token", tokenModelRouter);
 app.use("/metadata", metadataRouter);
+app.use("/nfts", nftRouter)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
