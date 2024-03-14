@@ -1,5 +1,6 @@
 
 const { UserModel, AuthorSaleModel } = require("../model");
+const jwt = require('jsonwebtoken');
 
 exports.getUser = async (req, res) => {
     try {
@@ -75,11 +76,15 @@ exports.login = async (req, res) => {
             return res.status(401).json({ error: "Invalid password" });
         }
 
+        // Generate JWT token
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+            expiresIn: '7d' // Token expiration time
+        });
+
         // Successful login
-        res.json({ message: "Login successful" });
+        res.json({ message: "Login successful", token });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal server error" });
     }
 };
-

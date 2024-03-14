@@ -4,6 +4,7 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
+var {config} =require("dotenv")
 
 var indexRouter = require("./routes/index");
 var acceptedNftsRouter = require("./routes/acceptedNFT");
