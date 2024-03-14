@@ -3,8 +3,9 @@ const {
   getTokenMetadata,
   postTokenMetadata,
 } = require("../controller/metadataController");
+const { authenticate } = require("../authentication/auth");
 var router = express.Router();
 
-router.get("/", getTokenMetadata);
+router.get("/", authenticate,getTokenMetadata);
 
 module.exports = router;
