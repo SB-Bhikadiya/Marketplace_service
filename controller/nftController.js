@@ -8,6 +8,6 @@ exports.getNFTs = async(req,res) => {
             .populate('author');
         res.send(NFTs);
     } catch (error) {
-        console.log(error);
+        res.send({error: error});
     }
 }
