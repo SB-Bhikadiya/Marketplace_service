@@ -11,6 +11,7 @@ const {
   TokenModel,
   UserModel,
   MetadataModel,
+  AuthorSaleModel
 } = require("contracts/build/lib/models");
 
 module.exports = {
@@ -23,6 +24,7 @@ module.exports = {
   MetadataModel,
   PlacedBidModel,
   ResultedAuctionModel,
+  AuthorSaleModel,
   NFTCollectionModel,
   TokenModel,
   UserModel,

@@ -1,4 +1,5 @@
-const { UserModel } = require("../model");
+
+const { UserModel, AuthorSaleModel } = require("../model");
 
 exports.getUser = async (req, res) => {
     try {
@@ -10,7 +11,7 @@ exports.getUser = async (req, res) => {
 };
 
 exports.postUser = async (req, res) => {
-    const { email, password, address } = req.body;
+    const { email, password, wallet,username } = req.body;
     console.log(email, password);
     try {
         if (req.query.follow) {
@@ -32,18 +33,28 @@ exports.postUser = async (req, res) => {
             return res.status(400).json({ error: 'Email already exists' });
         }
         // Create a new user
+        
         const newUser = new UserModel({
+            username,
             email,
             password,
-            address
+            wallet
         });
-        await newUser.save();
+        const author =  await newUser.save();
+        const author_sale = await AuthorSaleModel.create({
+            address:wallet,
+            sales: 0,
+            volume: 0,
+            daily_sales: 0,
+            weekly_sales: 0,
+            floor_price: 0,
+            owners: 0,
+            assets: 0,
+            author,
+          });
         return res.json({ message: 'User created successfully', user: newUser });
     } catch (error) {
         console.error(error);
-        if (error.code === 11000 && error.keyPattern && error.keyPattern.address === 1) {
-            return res.status(400).json({ error: 'Address already exists' });
-        }
         return res.status(500).json({ error: "Internal Server Error" });
     }
 };
