@@ -17,36 +17,40 @@ exports.getNFTs = async(req,res) => {
         .populate('metadata');
         return res.send(NFT);
         }
+
+        const totalItems = await NftModel.countDocuments();
+        const totalPages = Math.ceil(totalItems / limit);
+
         const NFTs = await NftModel.find().skip(startIndex).limit(limit)
             .populate('bids')
             .populate('history')
             .populate('author')
             .populate('metadata');
 
-        // // Pagination result
-        // const pagination = {
-        //     currentPage: page,
-        //     totalPages: totalPages
-        // };
+        // Pagination result
+        const pagination = {
+            currentPage: page,
+            totalPages: totalPages
+        };
 
-        // // If there's a next page
-        // if (endIndex < totalItems) {
-        //     pagination.next = {
-        //         page: page + 1,
-        //         limit: limit
-        //     };
-        // }
+        // If there's a next page
+        if (endIndex < totalItems) {
+            pagination.next = {
+                page: page + 1,
+                limit: limit
+            };
+        }
 
-        // // If there's a previous page
-        // if (startIndex > 0) {
-        //     pagination.prev = {
-        //         page: page - 1,
-        //         limit: limit
-        //     };
-        // }
+        // If there's a previous page
+        if (startIndex > 0) {
+            pagination.prev = {
+                page: page - 1,
+                limit: limit
+            };
+        }
 
-        // res.json({ pagination, data: NFTs });
-        res.send(NFTs);
+        res.send({ pagination, data: NFTs });
+        // res.send(NFTs);
     } catch (error) {
         res.send({error: error});
     }
