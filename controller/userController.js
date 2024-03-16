@@ -3,10 +3,30 @@ const jwt = require("jsonwebtoken");
 
 exports.getUser = async (req, res) => {
   try {
-    const user = await UserModel.findOne({ wallet: req.query.wallet });
-    res.send(user);
+    if (req.query.author) {
+      const author = await UserModel.findOne({
+        wallet: { $regex: new RegExp("^" + req.query.author + "$", "i") },
+      });
+      return res.send(author);
+    }
+    if (req.query.wallet) {
+      const user = await UserModel.findOne({
+        wallet: { $regex: new RegExp("^" + req.query.wallet + "$", "i") },
+      });
+      if (user) {
+        // Generate JWT token
+        const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET, {
+          expiresIn: "7d", // Token expiration time
+        });
+        return res.send({ user, token });
+      } else {
+        return res.send({ message: "User not found with wallet address" });
+      }
+    }
+    const users = await UserModel.find().populate("author_sale");
+    return res.send(users);
   } catch (error) {
-    res.send(error);
+    return res.send(error);
   }
 };
 
@@ -32,15 +52,6 @@ exports.postUser = async (req, res) => {
       return res.status(400).json({ error: "Email already exists" });
     }
     // Create a new user
-
-    const newUser = new UserModel({
-      username,
-      email,
-      password,
-      wallet,
-      avatar,
-    });
-    const author = await newUser.save();
     const author_sale = await AuthorSaleModel.create({
       address: wallet,
       sales: 0,
@@ -52,6 +63,16 @@ exports.postUser = async (req, res) => {
       assets: 0,
       author,
     });
+    const newUser = new UserModel({
+      username,
+      email,
+      password,
+      wallet,
+      avatar,
+      author_sale,
+    });
+    const author = await newUser.save();
+
     return res.json({ message: "User created successfully", user: newUser });
   } catch (error) {
     console.error(error);
