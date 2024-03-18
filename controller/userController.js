@@ -33,16 +33,16 @@ exports.getUser = async (req, res) => {
 exports.postUser = async (req, res) => {
   const { email, password, wallet, username, avatar } = req.body;
   try {
-    if (req.query.follow) {
-      var getuser = await UserModel.findById(req.query.follow);
-      if (getuser.followers.includes(req.body.user)) {
-        getuser.followers.remove(req.body.user);
+    if (req.query.from && req.query.to) {
+      var getuser = await UserModel.findOne({wallet:req.query.to});
+      if (getuser.followers.includes(req.query.from)) {
+        getuser.followers.remove(req.query.from);
       } else {
-        getuser.followers.push(req.body.user);
+        getuser.followers.push(req.query.from);
       }
 
-      await UserModel.findByIdAndUpdate(req.query.follow, getuser);
-      var data = await UserModel.findById(req.query.follow);
+      await UserModel.findOneAndUpdate({wallet: req.query.to}, getuser);
+      var data = await UserModel.findOne({wallet: req.query.to});
       return res.send(data);
     }
     // Check if email already exists

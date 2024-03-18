@@ -2,6 +2,14 @@ const { NftModel } = require("../model");
 
 exports.getNFTs = async (req, res) => {
   try {
+
+    if (req.query.owner != null) {
+      const token = await NftModel.find({
+        owner: { $regex: new RegExp("^" + req.query.owner + "$", "i") },
+      }).populate({ path: "metadata" });
+      return res.send(token);
+    }
+
     const page = parseInt(req.query.page);
     const limit = 16;
 
@@ -13,7 +21,8 @@ exports.getNFTs = async (req, res) => {
         .populate("bids")
         .populate("history")
         .populate("author")
-        .populate("hot_collection")
+        .populate("owner")
+        .populate("hot_collections")
         .populate("metadata");
       return res.send(NFT);
     }
@@ -27,6 +36,7 @@ exports.getNFTs = async (req, res) => {
       .populate("bids")
       .populate("history")
       .populate("author")
+      .populate("hot_collections")
       .populate("metadata");
 
     // Pagination result

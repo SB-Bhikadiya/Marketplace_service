@@ -5,7 +5,14 @@ exports.getNFTCollection = async (req, res) => {
   try {
     if (req.query.creator != null) {
       const nftsCollection = await HotCollectionModel.find({
-        creator: { $regex: new RegExp("^" + req.query.creator + "$", "i") },
+        owner: { $regex: new RegExp("^" + req.query.creator + "$", "i") },
+      });
+      return res.send(nftsCollection);
+    }
+
+    if (req.query.address != null) {
+      const nftsCollection = await HotCollectionModel.findOne({
+        id: { $regex: new RegExp("^" + req.query.address + "$", "i") },
       });
       return res.send(nftsCollection);
     }
