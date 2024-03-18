@@ -52,6 +52,14 @@ exports.postUser = async (req, res) => {
       return res.status(400).json({ error: "Email already exists" });
     }
     // Create a new user
+    const newUser = new UserModel({
+      username,
+      email,
+      password,
+      wallet,
+      avatar,
+    });
+    const author = await newUser.save();
     const author_sale = await AuthorSaleModel.create({
       address: wallet,
       sales: 0,
@@ -61,17 +69,10 @@ exports.postUser = async (req, res) => {
       floor_price: 0,
       owners: 0,
       assets: 0,
-      author,
+      author: author._id,
     });
-    const newUser = new UserModel({
-      username,
-      email,
-      password,
-      wallet,
-      avatar,
-      author_sale,
-    });
-    const author = await newUser.save();
+    author.author_sale = author_sale;
+    await author.save();
 
     return res.json({ message: "User created successfully", user: newUser });
   } catch (error) {
