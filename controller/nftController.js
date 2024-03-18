@@ -1,8 +1,8 @@
+const { BidModel, UserModel } = require("contracts/build/lib/models");
 const { NftModel } = require("../model");
 
 exports.getNFTs = async (req, res) => {
   try {
-
     if (req.query.owner != null) {
       const token = await NftModel.find({
         owner: { $regex: new RegExp("^" + req.query.owner + "$", "i") },
@@ -24,6 +24,10 @@ exports.getNFTs = async (req, res) => {
         .populate("owner")
         .populate("hot_collections")
         .populate("metadata");
+      for (let index = 0; index < NFT.history.length; index++) {
+        const activity = NFT.history[index];
+        activity.author = await UserModel.findById(activity.author);
+      }
       return res.send(NFT);
     }
 
