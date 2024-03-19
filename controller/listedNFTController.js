@@ -1,12 +1,11 @@
-const { ListedNFTModel } = require("../model");
+const { ListedNFTModel, TokenModel } = require("../model");
 
 exports.getListedNFTs = async (req, res) => {
   try {
-    if (req.query.nft != null && req.query.tokenId != null) {
-      const listedNFTs = await ListedNFTModel.findOne({
-        nft: { $regex: new RegExp("^" + req.body.nft + "$", "i") },
-        tokenId: req.query.tokenId,
-      });
+    if (req.query.owner != null) {
+      const listedNFTs = await TokenModel.find({
+        owner: { $regex: new RegExp("^" + req.query.owner + "$", "i") },
+      }).populate({ path: "metadata" });
       return res.send(listedNFTs);
     }
     const listedNFTs = await ListedNFTModel.find();
