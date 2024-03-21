@@ -39,7 +39,14 @@ exports.getNFTs = async (req, res) => {
         .populate("metadata");
       for (let index = 0; index < NFT.history.length; index++) {
         const activity = NFT.history[index];
-        activity.author = await UserModel.findById(activity.author);
+        const author = await UserModel.findById(activity.author);
+        activity.author = author;
+      }
+
+      for (let index = 0; index < NFT.bids.length; index++) {
+        const bid = NFT.bids[index];
+        const bidder = await UserModel.findById(bid.author);
+        bid.author = bidder;
       }
       return res.send(NFT);
     }
