@@ -34,15 +34,15 @@ exports.postUser = async (req, res) => {
   const { email, password, wallet, username, avatar } = req.body;
   try {
     if (req.query.from && req.query.to) {
-      var getuser = await UserModel.findOne({wallet:req.query.to});
+      var getuser = await UserModel.findOne({ wallet: req.query.to });
       if (getuser.followers.includes(req.query.from)) {
         getuser.followers.remove(req.query.from);
       } else {
         getuser.followers.push(req.query.from);
       }
 
-      await UserModel.findOneAndUpdate({wallet: req.query.to}, getuser);
-      var data = await UserModel.findOne({wallet: req.query.to});
+      await UserModel.findOneAndUpdate({ wallet: req.query.to }, getuser);
+      var data = await UserModel.findOne({ wallet: req.query.to });
       return res.send(data);
     }
     // Check if email already exists
@@ -106,6 +106,18 @@ exports.login = async (req, res) => {
     res.json({ message: "Login successful", token, user });
   } catch (error) {
     console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+exports.updateUserProfile = async (req, res) => {
+  try {
+    const user = await UserModel.findOneAndUpdate(
+      { wallet: req.user.wallet },
+      { $set: req.body }
+    );
+    res.json({ message: "Profile update successful", user });
+  } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
 };
