@@ -55,7 +55,7 @@ exports.getNFTs = async (req, res) => {
     const totalPages = Math.ceil(totalItems / limit);
 
     const NFTs = await NftModel.find()
-    .sort({ created_at: -1 })
+      .sort({ created_at: -1 })
       .skip(startIndex)
       .limit(limit)
       .populate("bids")

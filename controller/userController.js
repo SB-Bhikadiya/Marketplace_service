@@ -1,4 +1,5 @@
 const { UserModel, AuthorSaleModel } = require("../model");
+const { calculateDailySalesPerUser, calculateWeeklySalesPerUser, calculateFloorPricePerUser } = require("contracts/build/lib/utils/calculate");
 const jwt = require("jsonwebtoken");
 
 exports.getUser = async (req, res) => {
@@ -13,6 +14,7 @@ exports.getUser = async (req, res) => {
       const user = await UserModel.findOne({
         wallet: { $regex: new RegExp("^" + req.query.wallet + "$", "i") },
       });
+
       if (user) {
         // Generate JWT token
         const token = jwt.sign(user.toJSON(), process.env.JWT_SECRET, {
